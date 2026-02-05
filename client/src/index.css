@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+@theme {
+  --color-uno-red: #D72600;
+  --color-uno-blue: #0956BF;
+  --color-uno-green: #379711;
+  --color-uno-yellow: #ECD407;
+}
