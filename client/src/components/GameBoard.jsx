@@ -17,7 +17,7 @@ function GameBoard({
   const topCard = discardPile[discardPile.length - 1];
 
   return (
-    <div className="relative w-full h-screen bg-gradient-to-br from-green-800 to-green-900 overflow-hidden">
+    <div className="relative w-full h-screen bg-linear-to-br from-green-800 to-green-900 overflow-hidden">
       
       {/* Game Title */}
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
