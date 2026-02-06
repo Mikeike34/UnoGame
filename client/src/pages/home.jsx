@@ -1,28 +1,40 @@
-function homePage({socket, setUsername}){
-    const [name, setName] = React.useState("");
-
-    const submit = () => {
-        if(!name.trim()) return;
-        setUsername(name);
-        socket.emit('setUsername', name);
-    };
-
+export default function Home({ onCreateGame, onJoinGame }){
     return(
-        <div className="h-screen flex items-center justify-center bg-neutral-100">
-            <div className="bg-white p-6 rounded-xl shadow-lg-w-80">
-                <h1 className="text-xl font-bold mb-4">Enter Your Name: </h1>
-                <input
-                    className="w-full border px-3 py-2 rounded mb-4"
-                    value={name}
-                    onChange={e => setName(e.targetvalue)}
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center px-4">
+            <div className="w-full max-w-sm text-center space-y-6">
+                {/* Game Title */}
+                <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
+                    Home
+                </h1>
+
+                {/*Tagline */}
+                <p className="text-white/70 text-sm sm:text-base">
+                    A real-time multiplayer game of Uno
+                </p>
+
+                {/*Username Input*/}
+                <input 
+                    type="text"
+                    placeholder="Enter your username"
+                    className="w-full px-4 py-3 rounded-lg bg-white/10 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
-                <button
-                    onClick={submit}
-                    className="w-full bg-green-600 text-white py-2 rounded"
-                >
-                    Join
-                </button>
+
+                {/*Actions*/}
+                <div className="space-y-3">
+                    <button
+                        onClick={onJoinGame}
+                        className = "w-full py-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition"
+                    >
+                        Create Game
+                    </button>
+                    <button
+                        onClick={onJoinGame}
+                        className="w-full py-3 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition"
+                    >
+                        Join Game
+                    </button>
+                </div>
             </div>
         </div>
-    );
+    )
 }
