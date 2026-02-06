@@ -110,5 +110,20 @@ module.exports = function registerSocketHandlers(io){
                 io.to(gameId).emit("GAME_STATE_UPDATE", game)
             }
         })
+
+
+        socket.on("GET_GAMES", () => {
+            const publicGames = Array.from(games.values()).map(game => ({
+                id: game.id,
+                players: game.players.map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    connected: p.connected
+                })),
+                status: game.status
+            }))
+
+            socket.emit("GAMES_LIST", publicGames)
+        })
     })
 }
