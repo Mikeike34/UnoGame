@@ -15,6 +15,16 @@ function App() {
         { color: 'wild', value: '+4' },
         { color: 'red', value: '3' },
         { color: 'blue', value: '9' },
+        { color: 'red', value: '5' },
+        { color: 'blue', value: 'skip' },
+        { color: 'green', value: '7' },
+        { color: 'yellow', value: 'draw2' },
+        { color: 'wild', value: '+4' },
+        { color: 'red', value: '3' },
+        { color: 'blue', value: '9' },
+        
+        
+        
       ]
     },
     {
