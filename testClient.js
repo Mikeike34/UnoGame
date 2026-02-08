@@ -55,7 +55,9 @@ socket.on("connect", () => {
 
 socket.on("GAME_CREATED", game => {
   console.log(`🎮 Game created: ${game.id}`)
+  console.log(`🔑 Share this ID with other players: ${game.id}`)
   console.log("➡️ Waiting for players...")
+  console.log("💡 Type 'start' when ready (need at least 2 players)")
 })
 
 socket.on("GAME_STATE_UPDATE", game => {
@@ -93,6 +95,16 @@ function handleCommand(input) {
 
     case "play":
       playCard(args)
+      break
+
+    case "start":
+      // ADDED: Start game command
+      startGame()
+      break
+
+    case "disconnect":
+      // ADDED: Simulate disconnect for testing
+      simulateDisconnect()
       break
 
     case "reconnect":
@@ -152,6 +164,27 @@ function playCard(args) {
   })
 }
 
+// ADDED: Start game function
+function startGame() {
+  if (currentGame.status !== 'waiting') {
+    console.log("❌ Game already started or finished")
+    return
+  }
+
+  console.log("🎬 Starting game...")
+  socket.emit("START_GAME", {
+    gameId: currentGame.id,
+    playerId
+  })
+}
+
+// ADDED: Simulate disconnect for testing
+function simulateDisconnect() {
+  console.log("🔌 Disconnecting... (socket will close)")
+  console.log("💡 To reconnect, type 'reconnect' after a few seconds")
+  socket.disconnect()
+}
+
 function draw(){
   socket.emit("DRAW_CARD", {
     gameId: currentGame.id,
@@ -161,10 +194,10 @@ function draw(){
 
 function reconnect() {
   console.log("🔄 Reconnecting...")
-  socket.disconnect()
   socket.connect()
 
   socket.once("connect", () => {
+    console.log("✅ Reconnected, rejoining game...")
     socket.emit("REJOIN_GAME", {
       gameId: currentGame.id,
       playerId
@@ -179,7 +212,9 @@ Commands:
   top                 Show top discard card
   play <i> [color]    Play card index (color required for wild/+4)
   draw                Draw a card
-  reconnect           Simulate disconnect/reconnect
+  start               Start the game (host only, need 2+ players)
+  disconnect          Disconnect from game (test reconnection)
+  reconnect           Reconnect to game after disconnect
   help                Show this help
 `)
 }
@@ -194,6 +229,12 @@ function renderGame(game) {
   console.log("====== GAME STATE ======")
   console.log("Game ID:", game.id)
   console.log("Status:", game.status)
+  
+  // ADDED: Show if you're the host
+  const isHost = game.hostId === playerId
+  if (isHost) {
+    console.log("👑 You are the HOST")
+  }
 
   const top = game.discardPile.at(-1)
   if (top) {
@@ -204,16 +245,33 @@ function renderGame(game) {
   game.players.forEach((p, i) => {
     const turn = i === game.currentTurn ? "⬅️ TURN" : ""
     const you = p.id === playerId ? "(you)" : ""
-    console.log(`- ${p.name} ${you} | cards: ${p.hand.length} ${turn}`)
+    const host = p.id === game.hostId ? "👑" : ""
+    const connected = p.connected ? "🟢" : "🔴" // ADDED: Connection status
+    console.log(`${connected} ${host} ${p.name} ${you} | cards: ${p.hand.length} ${turn}`)
   })
 
   console.log("========================\n")
 
+  // ADDED: Show waiting message if game hasn't started
+  if (game.status === 'waiting') {
+    console.log(`⏳ Waiting for game to start... (${game.players.length}/4 players)`)
+    if (isHost) {
+      console.log("💡 Type 'start' when ready (need at least 2 players)")
+    }
+    console.log()
+  }
+
   if(game.status === 'finished'){
-    console.log('GAME OVER')
-    console.log(`${game.winner} WON THE GAME!`)
+    console.log('🎉 GAME OVER')
+    console.log(`🏆 ${game.winner} WON THE GAME!`)
+    return
+  }
+
+  // ADDED: Show abandoned status
+  if(game.status === 'abandoned'){
+    console.log('⚠️ GAME ABANDONED')
+    console.log('All players disconnected')
     return
   }
 }
-
 
