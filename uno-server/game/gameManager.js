@@ -5,6 +5,8 @@
 const{ createDeck } = require('./deck')
 const games = new Map()
 
+const MAX_PLAYERS = 4;
+
 function generateId(){
     return Math.random().toString(36).substring(2,7).toUpperCase()
 }
@@ -15,6 +17,7 @@ function createGame(socketId, name, playerId){
 
     const game = {
         id: gameId,
+        hostId: playerId, //tracks who created the game room.
         players: [
             {
                 id: playerId,
@@ -55,15 +58,38 @@ function joinGame(gameId, socketId, name, playerId){
 
     if(game.status !== "waiting") return {error: 'Game already started'}
 
+    if(game.players.length >=MAX_PLAYERS){
+        return {error: 'Game is full (max 4 players)'}
+    }
 
     game.players.push({
         id: playerId,
         socketId,
         name,
         hand:[],
+        hasCalledUno: false,
         connected: true
     })
     return game
+}
+
+function canStartGame(game, playerId){
+    //must be the host
+    if(game.hostId !== playerId){
+        return {canStart: false, error: 'Only the host can start the game'}
+    }
+
+    //must have atleast 2 players
+    if(game.players.length <2 ){
+        return { canStart: false, error: "Need at lest 2 players to start"}
+    }
+
+    //Game must be in waiting status
+    if(game.status !== 'waiting'){
+        return {canStart: false, error: 'Game already started!'}
+    }
+
+    return {canStart: true}
 }
 
 function nextPlayerIndex(game, steps = 1){
@@ -71,6 +97,28 @@ function nextPlayerIndex(game, steps = 1){
         game.currentTurn + 
         steps * game.direction + 
         game.players.length) % game.players.length
+}
+
+function advanceTurn(game, steps=1){
+    const maxAttempts = game.players.length;;
+    let attempts = 0
+
+    //keep advancing until we find a connected player or exhaust all options
+    do{
+        game.currentTurn = nextPlayerIndex(game, steps);
+        steps = 1;
+        attempts++;
+
+        //check if current player is connected
+        if(game.players[game.currentTurn].connected){
+            return; //stops when we find a ocnnected player
+        }
+    }while (attempts < maxAttempts);
+
+    if(!game.players[game.currentTurn].connected){
+        game.status = 'abandoned';
+        console.log(`Game ${game.id} abandoned due to all players disconnecting`);
+    }
 }
 
 function drawCards(player, n, game){
@@ -92,7 +140,7 @@ function drawCard(game, playerId){
     drawCards(player, 1, game)
 
     //drawing ends your turn
-    game.currentTurn = nextPlayerIndex(game)
+    advanceTurn(game)
 
     return { game }
 }
@@ -138,36 +186,36 @@ function playCard(game, playerId, cardIndex, chosenColor = null){
     //apply special effects
     switch(card.value){
         case 'skip':
-            game.currentTurn = nextPlayerIndex(game, 2) //skips next player
+            advanceTurn(game, 2) //skips next player
             break
         case 'reverse':
             game.direction *= -1
-            game.currentTurn = nextPlayerIndex(game)
+            advanceTurn(game)
             break
         case 'draw2': {
             const next = game.players[nextPlayerIndex(game)]
             drawCards(next, 2, game)
-            game.currentTurn = nextPlayerIndex(game)
+            advanceTurn(game)
             break
         }
         case 'wild':
             if(!chosenColor) return {error: 'Must choose a color'}
             card.color = chosenColor
-            game.currentTurn = nextPlayerIndex(game)
+            advanceTurn(game)
             break
         case '+4':
             if(!chosenColor) return {error: "Must chose a color"}
             card.color = chosenColor
             const next = game.players[nextPlayerIndex(game)]
             drawCards(next, 4, game)
-            game.currentTurn = nextPlayerIndex(game)
+            advanceTurn(game)
             break
         default: //number cards
-            game.currentTurn = nextPlayerIndex(game)
+            advanceTurn(game)
             break
     }
 
     return { game }
 }
 
-module.exports = {createGame, getGame, joinGame, games, playCard, drawCards, canPlay, nextPlayerIndex, drawCard}
+module.exports = {createGame, getGame, joinGame, games, playCard, drawCards, canPlay, nextPlayerIndex, drawCard, canStartGame, advanceTurn}

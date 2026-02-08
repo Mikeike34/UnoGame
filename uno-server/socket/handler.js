@@ -2,7 +2,7 @@
 //Socket events and updates
 
 
-const { createGame, getGame, joinGame, games, playCard, drawCard } = require("../game/gameManager")
+const { createGame, getGame, joinGame, games, playCard, drawCard, canStartGame, advanceTurn } = require("../game/gameManager")
 const { startGame } = require("../game/gameLogic")
 
 module.exports = function registerSocketHandlers(io){
@@ -18,28 +18,25 @@ module.exports = function registerSocketHandlers(io){
             //broadcast to host
             socket.emit("GAME_CREATED", game)
 
-            //Automatically start only if enough players join
-            const MIN_PLAYERS = 2
-
-            //poll every second until enough players join
-            const startInterval = setInterval(() => {
-                const currentGame = getGame(game.id)
-                if(!currentGame){
-                    clearInterval(startInterval)
-                    return
-                }
-
-                if(currentGame.players.length >= MIN_PLAYERS && currentGame.status === 'waiting'){
-                    console.log(`Starting game ${game.id} with ${currentGame.players.length} players`)
-                    startGame(currentGame)
-                    io.to(game.id).emit("GAME_STATE_UPDATE", currentGame)
-                    clearInterval(startInterval)
-                }
-            },1000)
         })
 
-        socket.on("START_GAME", ({ gameId }) => {
+        socket.on("START_GAME", ({ gameId, playerId }) => {
             const game = getGame(gameId)
+
+            if(!game){
+                socket.emit('INVALID_MOVE', "Game not found")
+                return
+            }
+            //validate host
+            const validation = canStartGame(game, playerId)
+
+            if(!validation.canStart){
+                socket.emit('INVALID_MOVE', validation.error)
+                return
+            }
+
+            //start game
+            console.log(`Game ${game.id} starting with ${game.players.length} players`)
             startGame(game)
             io.to(gameId).emit("GAME_STATE_UPDATE", game)
         })
@@ -55,7 +52,7 @@ module.exports = function registerSocketHandlers(io){
             //Join the room after adding to players
             socket.join(game.id)
 
-            console.log(`Player ${name} joined game ${game.id}`)
+            console.log(`Player ${name} joined game ${game.id} (${game.players.length}/${4} players)`)
 
             //emit full game state to all players
             io.to(game.id).emit("GAME_STATE_UPDATE", game)
@@ -84,6 +81,14 @@ module.exports = function registerSocketHandlers(io){
                 const player = game.players.find(p => p.socketId === socket.id)
                 if(player){
                     player.connected = false
+
+                    if(game.status === 'active'){
+                        const currentPlayer = game.players[game.currentTurn]
+                        if(currentPlayer.id === player.id){
+                            console.log(`Player ${player.name} disconnected during their turn. advancing turn...`)
+                            advanceTurn(game)
+                        }
+                    }
                     io.to(game.id).emit("GAME_STATE_UPDATE", game)
                 }
             }
@@ -115,12 +120,14 @@ module.exports = function registerSocketHandlers(io){
         socket.on("GET_GAMES", () => {
             const publicGames = Array.from(games.values()).map(game => ({
                 id: game.id,
+                hostId: game.hostId,
                 players: game.players.map(p => ({
                     id: p.id,
                     name: p.name,
                     connected: p.connected
                 })),
-                status: game.status
+                status: game.status,
+                playerCount: game.players.length
             }))
 
             socket.emit("GAMES_LIST", publicGames)
