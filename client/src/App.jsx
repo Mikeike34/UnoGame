@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSocket } from './context/SocketContext';
 import Home from './pages/home';
 import GameRoomsList from './pages/GameRoomsList';
@@ -13,6 +13,12 @@ function App() {
   const [gameState, setGameState] = useState(null);
   const [hostLeftMessage, setHostLeftMessage] = useState(null);
 
+  const currentViewRef = useRef(currentView);
+  const setView = (view) => {
+    currentViewRef.current = view;
+    setCurrentView(view);
+  };
+
   // Socket event listeners
   useEffect(() => {
     if (!socket) return;
@@ -21,7 +27,7 @@ function App() {
     socket.on('GAME_CREATED', (game) => {
       console.log('Game created:', game);
       setGameState(game);
-      setCurrentView('lobby');
+      setView('lobby');
     });
 
     // Game state updated
@@ -29,13 +35,13 @@ function App() {
       console.log('Game state updated:', game);
       setGameState(game);
 
-      if(game.status === 'waiting' && currentView === 'rooms'){
-        setCurrentView('lobby');
+      if(game.status === 'waiting' && currentViewRef.current === 'rooms'){
+        setView('lobby');
       }
       
       // Auto-navigate to game board when game starts
       if (game.status === 'active') {
-        setCurrentView('game');
+        setView('game');
       }
     });
 
@@ -49,7 +55,7 @@ function App() {
     socket.on('HOST_LEFT', () => {
       console.log('Host ended the game');
       setGameState(null);
-      setCurrentView('rooms');
+      setView('rooms');
       setHostLeftMessage(true);
     });
 
@@ -58,13 +64,14 @@ function App() {
       socket.off('GAME_CREATED');
       socket.off('GAME_STATE_UPDATE');
       socket.off('INVALID_MOVE');
+      socket.off('HOST_LEFT');
     };
-  }, [socket, currentView]);
+  }, [socket]);
 
   // Handler: User enters username
   const handleEnter = (enteredUsername) => {
     setUsername(enteredUsername);
-    setCurrentView('rooms');
+    setView('rooms');
   };
 
   // Handler: Create new game
@@ -102,22 +109,13 @@ function App() {
     });
   };
 
-  // Handler: Leave lobby
-  const handleLeaveLobby = () => {
+  //Handler: Leave (from lobby or game)
+  const handleLeave = () => {
     if(socket && gameState){
       socket.emit('LEAVE_GAME', {gameId: gameState.id, playerId});
     }
     setGameState(null);
-    setCurrentView('roooms');
-  };
-
-  //Handler: Leave game
-  const handleLeaveGame = () => {
-    if(socket && gameState){
-      socket.emit('LEAVE_GAME', {gameId: gameState.id, playerId});
-    }
-    setGameState(null);
-    setCurrentView('rooms');
+    setView('rooms');
   };
 
   // Handler: Play card
@@ -178,7 +176,7 @@ function App() {
           game={gameState}
           playerId={playerId}
           onStartGame={handleStartGame}
-          onLeave={handleLeaveLobby}
+          onLeave={handleLeave}
         />
       )}
 
@@ -191,7 +189,7 @@ function App() {
           deckCount={gameState.deck.length}
           onDrawCard={handleDrawCard}
           onPlayCard={handlePlayCard}
-          onLeaveGame={handleLeaveGame}
+          onLeaveGame={handleLeave}
           winner={gameState.winner}
         />
       )}
