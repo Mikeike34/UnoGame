@@ -184,6 +184,8 @@ function App() {
           deckCount={gameState.deck.length}
           onDrawCard={handleDrawCard}
           onPlayCard={handlePlayCard}
+          onLeaveGame={handleLeaveGame}
+          winner={gameState.winner}
         />
       )}
     </>
