@@ -45,7 +45,7 @@ function getGame(gameId){
 }
 
 function deleteGame(gameId){
-    const existed = game.has(gameId)
+    const existed = games.has(gameId)
     games.delete(gameId)
     return existed
 }
