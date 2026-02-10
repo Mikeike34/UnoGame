@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSocket } from "../context/SocketContext";
 
-export default function GameRoomsList({username, onCreateGame, onJoinGame}){
+export default function GameRoomsList({username, onCreateGame, onJoinGame, hostLeftMessage, onDismissHostLeft}){
     const { socket } = useSocket();
     const [rooms, setRooms] = useState([]);
     const [selectedRoom, setSelectedRoom] = useState(null);
@@ -50,6 +50,19 @@ export default function GameRoomsList({username, onCreateGame, onJoinGame}){
                     <p className="text-white/60">Welcome, {username}!</p>
                 </div>
 
+                {/*Host Left Banner */}
+                {hostLeftMessage && (
+                    <div className = 'flex items-center justify-between bg-yellow-500/20 border border-yellow-500/40 text-yellow-200 px-4 py-3 rounded-lg'>
+                        <span className ='text-sm font-medium'>The host ended the game.</span>
+                        <button
+                            onClick={onDismissHostLeft}
+                            className ='ml-4 text-yellow-200 hover:text-white font-bold text-lg leading-none'
+                        >
+                            x
+                        </button>
+                    </div>
+                )}
+                {/*Create Game Button */}
                 <button
                     onClick = {handleCreateGame}
                     className = "w-full py-4 rounded-lg bg-uno-red hover:bg-uno-red/90 text-white font-semibold transition text-lg"
