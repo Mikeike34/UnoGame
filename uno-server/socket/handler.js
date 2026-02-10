@@ -2,7 +2,7 @@
 //Socket events and updates
 
 
-const { createGame, getGame, joinGame, games, playCard, drawCard, canStartGame, advanceTurn } = require("../game/gameManager")
+const { createGame, getGame, deleteGame, joinGame, games, playCard, drawCard, canStartGame, advanceTurn } = require("../game/gameManager")
 const { startGame } = require("../game/gameLogic")
 
 module.exports = function registerSocketHandlers(io){
@@ -116,9 +116,36 @@ module.exports = function registerSocketHandlers(io){
             }
         })
 
+        socket.on("LEAVE_GAME", ({ gameId, playerId}) => {
+            const game = getGame(gameId)
+            if(!game) return
+
+            const isHost = game.hostId === playerId
+
+            if(isHost){
+                //Notify other players that host is leaving
+                console.log(`Host left game ${gameId}, ending Ggame...`)
+                io.to(gameId).emit('HOST_LEFT')
+                deleteGame(gameId)
+            }else{
+                //Non-host player leaving- just remove them from player list
+                game.players = game.players.filter(p => p.id !== playerId)
+                console.log(`Player ${playerId} left game ${gameId}`)
+
+                //if no players left clean up game
+                if(game.players.length === 0){
+                    deleteGame(gameId)
+                }else{
+                    io.to(gameId).emit("GAME_STATUS_UPDATE", game)
+                }
+            }
+        })
+
 
         socket.on("GET_GAMES", () => {
-            const publicGames = Array.from(games.values()).map(game => ({
+            const publicGames = Array.from(games.values())
+            .filter(game => game.status === 'waiting' || game.status === 'active')
+            .map(game => ({
                 id: game.id,
                 hostId: game.hostId,
                 players: game.players.map(p => ({
