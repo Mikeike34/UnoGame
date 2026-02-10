@@ -201,7 +201,7 @@ function playCard(game, playerId, cardIndex, chosenColor = null){
         case 'draw2': {
             const next = game.players[nextPlayerIndex(game)]
             drawCards(next, 2, game)
-            advanceTurn(game)
+            advanceTurn(game, 2)
             break
         }
         case 'wild':
@@ -214,7 +214,7 @@ function playCard(game, playerId, cardIndex, chosenColor = null){
             card.color = chosenColor
             const next = game.players[nextPlayerIndex(game)]
             drawCards(next, 4, game)
-            advanceTurn(game)
+            advanceTurn(game, 2)
             break
         default: //number cards
             advanceTurn(game)
