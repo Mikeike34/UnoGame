@@ -44,6 +44,12 @@ function getGame(gameId){
     return games.get(gameId)
 }
 
+function deleteGame(gameId){
+    const existed = game.has(gameId)
+    games.delete(gameId)
+    return existed
+}
+
 function joinGame(gameId, socketId, name, playerId){
     const game = games.get(gameId)
     if(!game) return { error: "Game not found"}
@@ -218,4 +224,4 @@ function playCard(game, playerId, cardIndex, chosenColor = null){
     return { game }
 }
 
-module.exports = {createGame, getGame, joinGame, games, playCard, drawCards, canPlay, nextPlayerIndex, drawCard, canStartGame, advanceTurn}
+module.exports = {createGame, getGame, deleteGame, joinGame, games, playCard, drawCards, canPlay, nextPlayerIndex, drawCard, canStartGame, advanceTurn}
