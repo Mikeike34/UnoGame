@@ -29,7 +29,9 @@ function GameBoard({
   discardPile = [], 
   deckCount = 0,
   onDrawCard,
-  onPlayCard 
+  onPlayCard,
+  onLeaveGame,
+  winner=null 
 }) {
   
   const currentPlayer = players.find(p => p.id === currentPlayerId);
@@ -53,6 +55,30 @@ function GameBoard({
       overflow-hidden
       bg-linear-to-br from-green-800 to-green-900
     ">
+      <button
+        onClick={onLeaveGame}
+        className='absolute top-4 left-4 z-50 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition shadow-lg text-sm'
+      >
+        Leave Game
+      </button>
+
+      {/*Win Message Overlay */}
+      {winner && (
+        <div className='absolute inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm'>
+          <div className='bg-white rounded-2xl p-8 shadow-2xl text-center max-w-md mx-4 animate-bounce-in'>
+            <div className ='text-6xl mb-4'>🎉</div>
+            <h2 className='text-4xl dont-bold text-uno-red mb-2'>Game Over!</h2>
+            <p className = 'text-2xl font-semibold text-gray-800 mb-6'>{winner} Wins!</p>
+            <button
+              onClick={onLeaveGame}
+              className='px-6 py-3 bg-uno-red hover:bg-uno-red/90 text-white rounded-lg font-semibold transition'
+            >
+              Back to Lobby
+            </button>
+          </div>
+        </div>
+      )}
+
       {/*Mobile Layout -Single Column*/}
       <div className = "md:hidden flex flex-col h-full py-4 gap-4">
         {/*Top Player */}
@@ -144,10 +170,10 @@ function GameBoard({
       </div>
 
       {/*Desktop Layout - Grid */}
-      <div className='hidden md:grid md:grid-cols-[auto_1fr_auto] md:grid-rows-[auto_1fr_auto] md:h-full md:gap-4 md:p-4'>
+      <div className='hidden md:flex md:flex-col md:h-full md:gap-4 md:p-4'>
         {/* Top Zone - Spans all 3 columns */}
         {topPlayer && (
-          <div className="md:col-span-3 flex justify-center items-center">
+          <div className="flex justify-center items-center">
             <Opponent 
               player={topPlayer} 
               side='top' 
@@ -157,56 +183,60 @@ function GameBoard({
         )}
 
         {/* Middle Row - 3 columns */}
-        {/* Left Zone */}
-        {leftPlayer && (
-          <div className='flex items-center justify-center'>
-            <Opponent 
-              player={leftPlayer}
-              side='left'
-              vertical
-              isCurrentTurn={currentTurnPlayerId === leftPlayer.id}
-            />
-          </div>
-        )}
+        <div className="flex-1 flex items-center justify-center gap-8">
 
-        {/* Center Zone - Draw & Discard */}
-        <div className='flex items-center justify-center gap-8'>
-          {/* Draw Pile */}
-          <div 
-            onClick={onDrawCard} 
-            className='cursor-pointer hover:scale-105 transition-transform'
-          >
-            <Card showBack isPlayable />
-            <p className='text-white text-xs text-center mt-1'>{deckCount} cards</p>
+        
+          {/* Left Zone */}
+          <div className="flex items-center justify-center min-w-[200px]">
+            {leftPlayer && (
+                <Opponent 
+                  player={leftPlayer}
+                  side='left'
+                  vertical
+                  isCurrentTurn={currentTurnPlayerId === leftPlayer.id}
+                />
+            )}
           </div>
 
-          {/* Discard Pile */}
-          <div>
-            {topCard ? (
-              <Card color={topCard.color} value={topCard.value} />
-            ) : (
-              <div className='w-24 h-36 border-2 border-white/40 rounded-xl flex items-center justify-center text-white/50 text-sm'>
-                Discard
-              </div>
+          {/* Center Zone - Draw & Discard */}
+          <div className='flex items-center justify-center gap-8'>
+            {/* Draw Pile */}
+            <div 
+              onClick={onDrawCard} 
+              className='cursor-pointer hover:scale-105 transition-transform'
+            >
+              <Card showBack isPlayable />
+              <p className='text-white text-xs text-center mt-1'>{deckCount} cards</p>
+            </div>
+
+            {/* Discard Pile */}
+            <div>
+              {topCard ? (
+                <Card color={topCard.color} value={topCard.value} />
+              ) : (
+                <div className='w-24 h-36 border-2 border-white/40 rounded-xl flex items-center justify-center text-white/50 text-sm'>
+                  Discard
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Zone */}
+          <div className="flex items-center justify-center min-w-[200px]">
+            {rightPlayer && (
+                <Opponent 
+                  player={rightPlayer} 
+                  side='right'
+                  vertical
+                  isCurrentTurn={currentTurnPlayerId === rightPlayer.id} 
+                />
             )}
           </div>
         </div>
 
-        {/* Right Zone */}
-        {rightPlayer && (
-          <div className='flex items-center justify-center'>
-            <Opponent 
-              player={rightPlayer} 
-              side='right'
-              vertical
-              isCurrentTurn={currentTurnPlayerId === rightPlayer.id} 
-            />
-          </div>
-        )}
-
         {/* Bottom Zone - Spans all 3 columns */}
         {currentPlayer && (
-          <div className='md:col-span-3 flex justify-center items-end pb-2.5'>
+          <div className='flex justify-center items-end px-2.5 pb-2.5'>
             <div className={`
               transition-all
               ${isMyTurn ?

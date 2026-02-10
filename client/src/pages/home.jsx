@@ -1,10 +1,21 @@
-export default function Home({ onCreateGame, onJoinGame }){
+import { useState } from "react";
+export default function Home({ onEnter }){
+
+    const [username, setUsername] = useState('');
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if(username.trim()){
+            onEnter(username.trim());
+        }
+    };
+
     return(
         <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center px-4">
             <div className="w-full max-w-sm text-center space-y-6">
                 {/* Game Title */}
                 <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
-                    Home
+                    UNO
                 </h1>
 
                 {/*Tagline */}
@@ -12,29 +23,30 @@ export default function Home({ onCreateGame, onJoinGame }){
                     A real-time multiplayer game of Uno
                 </p>
 
-                {/*Username Input*/}
-                <input 
-                    type="text"
-                    placeholder="Enter your username"
-                    className="w-full px-4 py-3 rounded-lg bg-white/10 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-
-                {/*Actions*/}
-                <div className="space-y-3">
+                {/*Username Form */}
+                <form onSubmit = {handleSubmit} className = "space-y-4">
+                    <input 
+                        type='text'
+                        value = {username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Enter your username"
+                        maxLength={15}
+                        className = 'w-full px-4 py-3 rounded-lg bg-white/10 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-uno-red border border-white/20'
+                        autoFocus
+                    />
                     <button
-                        onClick={onJoinGame}
-                        className = "w-full py-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition"
+                        type='submit'
+                        disabled = {!username.trim()}
+                        className = 'w-full py-3 rounded-lg bg-uno-red hover:bg-uno-red/90 text-white font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                        Create Game
+                        Enter
                     </button>
-                    <button
-                        onClick={onJoinGame}
-                        className="w-full py-3 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition"
-                    >
-                        Join Game
-                    </button>
-                </div>
+                </form>
+                {/*Footer */}
+                <p className='text-white/40 text-xs mt-8'>
+                    Connect with friends and play Uno online! Developed by Michael Cantone
+                </p>
             </div>
         </div>
-    )
+    );
 }
