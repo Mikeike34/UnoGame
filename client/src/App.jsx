@@ -11,6 +11,7 @@ function App() {
   const [username, setUsername] = useState('');
   const [playerId] = useState(() => crypto.randomUUID());
   const [gameState, setGameState] = useState(null);
+  const [hostLeftMessage, setHostLeftMessage] = useState(null);
 
   // Socket event listeners
   useEffect(() => {
@@ -42,6 +43,14 @@ function App() {
     socket.on('INVALID_MOVE', (error) => {
       console.error('Invalid move:', error);
       alert(`Error: ${error}`);
+    });
+
+    //Host Left Game
+    socket.on('HOST_LEFT', () => {
+      console.log('Host ended the game');
+      setGameState(null);
+      setCurrentView('rooms');
+      setHostLeftMessage(true);
     });
 
     // Cleanup
@@ -95,21 +104,17 @@ function App() {
 
   // Handler: Leave lobby
   const handleLeaveLobby = () => {
-    // Disconnect and reset
-    if (socket) {
-      socket.disconnect();
-      socket.connect();
+    if(socket && gameState){
+      socket.emit('LEAVE_GAME', {gameId: gameState.id, playerId});
     }
     setGameState(null);
-    setCurrentView('rooms');
+    setCurrentView('roooms');
   };
 
   //Handler: Leave game
   const handleLeaveGame = () => {
-    //disconnect and reset (go back to rooms)
-    if(socket){
-      socket.disconnect();
-      socket.connect();
+    if(socket && gameState){
+      socket.emit('LEAVE_GAME', {gameId: gameState.id, playerId});
     }
     setGameState(null);
     setCurrentView('rooms');
@@ -163,6 +168,8 @@ function App() {
           username={username}
           onCreateGame={handleCreateGame}
           onJoinGame={handleJoinGame}
+          hostLeftMessage={hostLeftMessage}
+          onDismissHostLeft={() => setHostLeftMessage(false)}
         />
       )}
 
