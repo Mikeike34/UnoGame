@@ -203,7 +203,7 @@ function GameBoard({
 
         
           {/* Left Zone */}
-          <div className="flex items-center justify-center min-w-[200px]">
+          <div className="flex items-center justify-center min-w-50">
             {leftPlayer && (
                 <Opponent 
                   player={leftPlayer}
@@ -237,7 +237,7 @@ function GameBoard({
           </div>
 
           {/* Right Zone */}
-          <div className="flex items-center justify-center min-w-[200px]">
+          <div className="flex items-center justify-center min-w-50">
             {rightPlayer && (
                 <Opponent 
                   player={rightPlayer} 
@@ -314,7 +314,7 @@ function Opponent({ player, vertical = false, side, isCurrentTurn, mobileLayout,
         className={`
             flex -space-x-8 sm:-space-x-10
             items-center
-            overflow-hidden max-w-[260px] md:max-w-none
+            overflow-hidden max-w-65 md:max-w-none
             ${vertical && side === "left" ? "rotate-90": ""}
             ${vertical && side === "right" ? "-rotate-90": ""}
             ${ side === "top" ? "-rotate-180": ""}
