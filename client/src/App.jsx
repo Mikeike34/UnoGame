@@ -12,6 +12,7 @@ function App() {
   const [playerId] = useState(() => crypto.randomUUID());
   const [gameState, setGameState] = useState(null);
   const [hostLeftMessage, setHostLeftMessage] = useState(null);
+  const [cardAnimation, setCardAnimation] = useState(null);
 
   const currentViewRef = useRef(currentView);
   const setView = (view) => {
@@ -57,6 +58,16 @@ function App() {
       setGameState(null);
       setView('rooms');
       setHostLeftMessage(true);
+    });
+
+    socket.on('CARD_PLAYED', ({ playerId: actingPlayerId }) => {
+      setCardAnimation({type: 'play', playerId: actingPlayerId});
+      setTimeout(() => setCardAnimation(null), 600);
+    });
+
+    socket.on('CARD_DRAWN', ({ playerId: actingPlayerId }) => {
+      setCardAnimation({type: 'draw', playerId: actingPlayerId });
+      setTimeout(() => setCardAnimation(null), 600);
     });
 
     // Cleanup

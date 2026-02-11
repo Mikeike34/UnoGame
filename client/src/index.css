@@ -28,3 +28,26 @@
 .animate-bounce-in{
   animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
+
+/*Card played - discard pile scales up and brightens then snaps back */
+@keyframes card-flash{
+  0% {transfrom: scale(1); filter: brightness(1);}
+  30% {transfrom: scale(1.15); filter: brightness(1.6);}
+  100% {transfrom: scale(1); filter: brightness(1);}
+}
+
+.animate-card-flash{
+  animation: card-flash 0.5s ease-out;
+}
+
+/*Player hand zone glows when they play or draw a card*/
+@keyframes hand-pulse {
+  0% {box-shadow:0 0 0  0px rgba(255, 255, 255, 0); }
+  40% {box-shadow: 0 0 20px 6px rgba(255, 255, 255, 0.5); }
+  100% {box-shadow: 0 0 0  0px rgba(255, 255, 255, 0); }
+}
+
+.animat-hand-pulse{
+  animation: hand-pulse 0.55s ease-out;
+  border-radius: 0.75rem;
+}

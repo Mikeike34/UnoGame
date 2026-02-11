@@ -31,7 +31,8 @@ function GameBoard({
   onDrawCard,
   onPlayCard,
   onLeaveGame,
-  winner=null 
+  winner=null,
+  cardAnimation =null 
 }) {
   
   const currentPlayer = players.find(p => p.id === currentPlayerId);
@@ -46,6 +47,16 @@ function GameBoard({
   const currentTurnPlayerId = players[currentTurnIndex]?.id
 
   const isMyTurn = currentTurnPlayerId === currentPlayerId
+
+  const animatingPlayerId = cardAnimation?.playerId;
+  const animationType = cardAnimation?.type;
+
+  const discardFlash = animatingPlayerId && animationType === 'play';
+  const deckFlash = animatingPlayerId && animationType === 'draw';
+
+  const isHandAnimating = (pid) => animatingPlayerId === pid;
+
+  
 
   return (
     <div className="
@@ -88,6 +99,8 @@ function GameBoard({
               player = {topPlayer}
               side = 'top'
               isCurrentTurn = {currentTurnPlayerId === topPlayer.id}
+              isHandAnimating={isHandAnimating(topPlayer.id)}
+              animationType={animationType}
             />
           </div>
         )}
@@ -99,6 +112,8 @@ function GameBoard({
               player={leftPlayer}
               side='left'
               isCurrentTurn={currentTurnPlayerId === leftPlayer.id}
+              isHandAnimating={isHandAnimating(leftPlayer.id)}
+              animationType={animationType}
             />
           </div>
         )}
@@ -111,28 +126,26 @@ function GameBoard({
               side='right'
               mobileLayout = 'left'
               isCurrentTurn={currentTurnPlayerId === rightPlayer.id}
+              isHandAnimating={isHandAnimating(rightPlayer.id)}
+              animationType={animationType}
             />
           </div>
         )}
-
-        {/* Center Zone - Draw & Discard Piles */}
+        {/* Center Piles — mobile */}
         <div className='flex items-center justify-center gap-6 flex-1'>
-          {/* Draw Pile */}
-          <div 
-            onClick={onDrawCard} 
-            className='cursor-pointer hover:scale-105 transition-transform'
+          <div
+            onClick={onDrawCard}
+            className={`cursor-pointer hover:scale-105 transition-transform ${deckFlash ? 'animate-card-flash' : ''}`}
           >
             <Card showBack isPlayable />
             <p className='text-white text-xs text-center mt-1'>{deckCount} cards</p>
           </div>
-
-          {/* Discard Pile */}
-          <div>
+          <div className={discardFlash ? 'animate-card-flash' : ''}>
             {topCard ? (
-              <Card color={topCard.color} value={topCard.value} />
+              <Card color={topCard.color} value={topCard.value} isPlayable={false} />
             ) : (
               <div className='w-16 h-24 border-2 border-white/40 rounded-xl flex items-center justify-center text-white/50 text-xs'>
-                 Discard
+                Discard
               </div>
             )}
           </div>
@@ -147,6 +160,7 @@ function GameBoard({
                 "ring-4 ring-white/30 rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.25)] p-2"
                 : ""
               }
+              ${isHandAnimating(currentPlayer.id) ? 'animate-hand-pulse' : ''}
             `}>
               <p className='text-center text-white font-bold text-sm mb-2'>
                 {currentPlayer.name} (You)
@@ -178,6 +192,8 @@ function GameBoard({
               player={topPlayer} 
               side='top' 
               isCurrentTurn={currentTurnPlayerId === topPlayer.id}
+              isHandAnimating={isHandAnimating(topPlayer.id)}
+              animationType={animationType}
             />
           </div>
         )}
@@ -194,25 +210,24 @@ function GameBoard({
                   side='left'
                   vertical
                   isCurrentTurn={currentTurnPlayerId === leftPlayer.id}
+                  isHandAnimating={isHandAnimating(leftPlayer.id)}
+              animationType={animationType}
                 />
             )}
           </div>
 
-          {/* Center Zone - Draw & Discard */}
+          {/* Center Piles — desktop */}
           <div className='flex items-center justify-center gap-8'>
-            {/* Draw Pile */}
-            <div 
-              onClick={onDrawCard} 
-              className='cursor-pointer hover:scale-105 transition-transform'
+            <div
+              onClick={onDrawCard}
+              className={`cursor-pointer hover:scale-105 transition-transform ${deckFlash ? 'animate-card-flash' : ''}`}
             >
               <Card showBack isPlayable />
               <p className='text-white text-xs text-center mt-1'>{deckCount} cards</p>
             </div>
-
-            {/* Discard Pile */}
-            <div>
+            <div className={discardFlash ? 'animate-card-flash' : ''}>
               {topCard ? (
-                <Card color={topCard.color} value={topCard.value} />
+                <Card color={topCard.color} value={topCard.value} isPlayable={false} />
               ) : (
                 <div className='w-24 h-36 border-2 border-white/40 rounded-xl flex items-center justify-center text-white/50 text-sm'>
                   Discard
@@ -229,6 +244,8 @@ function GameBoard({
                   side='right'
                   vertical
                   isCurrentTurn={currentTurnPlayerId === rightPlayer.id} 
+                  isHandAnimating={isHandAnimating(rightPlayer.id)}
+              animationType={animationType}
                 />
             )}
           </div>
@@ -243,6 +260,7 @@ function GameBoard({
                 "ring-4 ring-white/30 rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.25)] p-2"
                 : ""
               }
+              ${isHandAnimating(currentPlayer.id) ? 'animate-hand-pulse': ''}
             `}>
               <p className='text-center text-white font-bold mb-2'>
                 {currentPlayer.name} (You)
@@ -269,7 +287,7 @@ function GameBoard({
   )
 }
 
-function Opponent({ player, vertical = false, side, isCurrentTurn, mobileLayout}){
+function Opponent({ player, vertical = false, side, isCurrentTurn, mobileLayout, isAnimating, animationType}){
   const maxCards = 6;
   const displayCards = player.hand.slice(0, maxCards);
   const hiddenCards = Math.max(0, player.hand.length - maxCards);
@@ -281,11 +299,12 @@ function Opponent({ player, vertical = false, side, isCurrentTurn, mobileLayout}
       className={`
           flex items-center gap-3
           ${isRightSideLayout ? 'md:flex-row-reverse' : ""}
-          ${isCurrentTurn ? "ring-2 ring-white/40 rounded-xl p-2" : ""}
+          ${isAnimating ? 'animate-hand-pulse' : ''}
         `}
     >
       {/*Info panel */}
-      <div className='bg-white/20 backdrop-blur-sm px-3 py-2 rounded-lg text-center shrink-0'>
+      <div className= {`bg-white/20 backdrop-blur-sm px-3 py-2 rounded-lg text-center shrink-0
+      ${isCurrentTurn ? "ring-3 ring-white rounded-xl p-2" : ""}`}>
         <p className='text-white text-sm font-bold'>{player.name}</p>
         <p className='text-white text-xs'>{player.hand.length} cards</p>
       </div>
