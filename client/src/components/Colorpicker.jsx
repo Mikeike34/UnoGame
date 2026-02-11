@@ -21,10 +21,10 @@ function ColorPicker({onColorSelect, onCancel}){
                     {/*Top Left - Red */}
                     <button
                         onClick={() => onColorSelect('red')}
-                        className = 'absolute top-0 left-0 w-32 h-32 bg-uno-red hover:opacity-80 transition-opacity cursor-pointer rounded-tl-full border-2 border-white flex items-center justify-center group'
+                        className = 'absolute top-0 left-0 w-32 h-32 bg-uno-red hover:opacity-80 active:opacity-80 active:scale-110 transition-opacity cursor-pointer rounded-tl-full border-2 border-white flex items-center justify-center group'
                         style={{clipPath: 'polygon(100% 100%, 0% 100%, 0% 0%, 100% 0%)'}}
                     >
-                        <span className="text-white font-bold text-lg opacity-0 group-hover:opacity-100 transition-opacity absolute top-14 left-11">
+                        <span className="text-white font-bold text-lg opacity-0 group-hover:opacity-100 active:opacity-100 active:scale-110 transition-opacity absolute top-14 left-11">
                             Red
                         </span>
                     </button>
@@ -32,10 +32,10 @@ function ColorPicker({onColorSelect, onCancel}){
                     {/*Top Right - Blue */}
                     <button
                         onClick={() => onColorSelect('blue')}
-                        className = 'absolute top-0 right-0 w-32 h-32 bg-uno-blue hover:opacity-80 transition-opacity cursor-pointer rounded-tr-full border-2 border-white flex items-center justify-center group'
+                        className = 'absolute top-0 right-0 w-32 h-32 bg-uno-blue hover:opacity-80 active:opacity-80 active:scale-110 transition-opacity cursor-pointer rounded-tr-full border-2 border-white flex items-center justify-center group'
                         style={{clipPath: 'polygon(0% 100%, 0% 0%, 100% 0%, 100% 100%'}}
                     >
-                        <span className="text-white font-bold text-lg opacity-0 group-hover:opacity-100 transition-opacity absolute top-14 right-11">
+                        <span className="text-white font-bold text-lg opacity-0 group-hover:opacity-100 active:opacity-100 active:scale-110 transition-opacity absolute top-14 right-11">
                             Blue
                         </span>
                     </button>
@@ -43,10 +43,10 @@ function ColorPicker({onColorSelect, onCancel}){
                     {/*Bottom Left - Green */}
                     <button
                         onClick={() => onColorSelect('green')}
-                        className = 'absolute bottom-0 left-0 w-32 h-32 bg-uno-green hover:opacity-80 transition-opacity cursor-pointer rounded-bl-full border-2 border-white flex items-center justify-center group'
+                        className = 'absolute bottom-0 left-0 w-32 h-32 bg-uno-green hover:opacity-80 active:opacity-80 active:scale-110 transition-opacity cursor-pointer rounded-bl-full border-2 border-white flex items-center justify-center group'
                         style={{clipPath: 'polygon(100% 0%, 0% 0%, 0% 100%, 100% 100%'}}
                     >
-                        <span className="text-white font-bold text-lg opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-14 left-10">
+                        <span className="text-white font-bold text-lg opacity-0 group-hover:opacity-100 active:opacity-100 active:scale-110 transition-opacity absolute bottom-14 left-10">
                             Green
                         </span>
                     </button>
@@ -54,10 +54,10 @@ function ColorPicker({onColorSelect, onCancel}){
                     {/*Bottom Right - Yellow */}
                     <button
                         onClick={() => onColorSelect('yellow')}
-                        className = 'absolute bottom-0 right-0 w-32 h-32 bg-uno-yellow hover:opacity-80 transition-opacity cursor-pointer rounded-br-full border-2 border-white flex items-center justify-center group'
+                        className = 'absolute bottom-0 right-0 w-32 h-32 bg-uno-yellow hover:opacity-80 active:opacity-80 active:scale-110 transition-opacity cursor-pointer rounded-br-full border-2 border-white flex items-center justify-center group'
                         style={{clipPath: 'polygon(0% 0%, 0% 100%, 100% 100%, 100% 0%'}}
                     >
-                        <span className="text-white font-bold text-lg opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-14 right-10">
+                        <span className="text-white font-bold text-lg opacity-0 group-hover:opacity-100 active:opacity-100 active:scale-110 transition-opacity absolute bottom-14 right-10">
                             Yellow
                         </span>
                     </button>
