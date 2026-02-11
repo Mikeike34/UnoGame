@@ -132,6 +132,7 @@ module.exports = function registerSocketHandlers(io){
             }else{
                 //Non-host player leaving- just remove them from player list
                 game.players = game.players.filter(p => p.id !== playerId)
+                socket.leave(gameId);
                 console.log(`Player ${playerId} left game ${gameId}`)
 
                 //if no players left clean up game
