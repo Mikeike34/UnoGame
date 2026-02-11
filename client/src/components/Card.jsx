@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 
-function Card({color, value, onClick, isPlayable = true, showBack = false}) {
+function Card({color, value, onClick, isPlayable = true, showBack = false, zIndex = 0}) {
+
+    const[isActive, setIsActive] = useState(false);
+
     const colorClasses = {
         red: 'uno-red',
         blue: 'uno-blue',
@@ -29,17 +32,59 @@ function Card({color, value, onClick, isPlayable = true, showBack = false}) {
         }
     }
 
+    const handleTouchStart = (e) => {
+        if(!isPlayable) return;
+        setIsActive(true);
+    };
+
+    const handleTouchMove = (e) => {
+        if(!isPlayable) return;
+        const touch = e.touches[0];
+        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+        const isOverCard = element?.closest('[data-card-id]')?.dataset.cardId === e.currentTarget.dataset.cardId;
+        setIsActive(isOverCard);
+    };
+
+    const handleTouchEnd = (e) => {
+        if(!isPlayable)return;
+        if(isActive && onClick){
+            onClick();
+        }
+        setIsActive(false);
+    };
+
+    const handleMouseEnter = () => {
+        if(isPlayable) setIsActive(true);
+    };
+
+    const handleMouseLeave = () => {
+        setIsActive(false);
+    };
+
+    const handleClick = (e) => {
+        if(isPlayable && onClick){
+            onClick();
+        }
+    };
+
+    const dynamicZIndex = isActive ? 100 : 10 + zIndex;
+
+    const interactionClasses = isPlayable ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed';
+
+    const activeTransform = isActive && isPlayable ? 'scale-110 -translate-y-2' : '';
+
     {/*Back of card design */}
     if(showBack) {
         return(
             <div
-                onClick ={isPlayable ? onClick : undefined}
+                onClick ={handleClick}
                 className = {`
                     relative rounded-xl shadow-lg bg-white
                     overflow-hidden transition-all duration-200
-                    ${isPlayable ? 'cursor-pointer hover:scale-110 hover:-translate-y-2' : 'cursor-default'}
+                    ${interactionClasses}
                     w-16 h-24 sm:w-20 sm:h-32 md:w-24 md:h-36
                     `}
+                    style={{zIndex: dynamicZIndex}}
             >
                 {/*Black background */}
                 <div className="absolute inset-2 bg-black rounded-lg flex items-center justify-center overflow-hidden">
@@ -62,12 +107,20 @@ function Card({color, value, onClick, isPlayable = true, showBack = false}) {
     if(color === 'wild'){
         return(
             <div
-                onClick={isPlayable ? onClick : undefined}
+                data-card-id={`${color}-${value}-${zIndex}`}
+                onClick={handleClick}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd = {handleTouchEnd}
                 className = {`
                     relative  rounded-xl shadow-lg bg-white transition-all duration-200
-                    ${isPlayable ? 'cursor-pointer hover:scale-110 hover:-translate-y-2 hover:z-20 active:scale-110 active:-translate-y-2 active:z-20' : 'opacity-50 cursor-not-allowed'}
+                    ${interactionClasses}
+                    ${activeTransform}
                     w-16 h-24 sm:w-20 sm:h-32 md:w-24 md:h-36
                     `}
+                    style={{zIndex: dynamicZIndex}}
             >
                 {/*Background for wildcard */}
                 <div className="absolute inset-1 sm:inset-2 bg-black rounded-lg overflow-hidden">
@@ -105,14 +158,22 @@ function Card({color, value, onClick, isPlayable = true, showBack = false}) {
     //Regular numbered and action cards Design
     return(
         <div
-            onClick={isPlayable ? onClick : undefined}
+            data-card-id={`${color}-${value}-${zIndex}`}
+            onClick={handleClick}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd = {handleTouchEnd}
             className = {`
                 relative rounded-xl shadow-lg
                 transition-all duration-200
-                ${isPlayable ? 'cursor-pointer hover:scale-110 hover:-translate-y-2 hover:z-20 active:scale-110 active:-translate-y-2 active:z-20' : 'opacity-50 cursor-not-allowed'}
+                ${interactionClasses}
+                ${activeTransform}
                 bg-white
                 w-16 h-24 sm:w-20 sm:h-32 md:w-24 md:h-36
                 `}
+                style={{zIndex:dynamicZIndex}}
         >
                 {/*Colored background with white borders*/}
                 <div className = {`absolute inset-1 sm:inset-2 bg-${colorClasses[color]} rounded-lg`}>

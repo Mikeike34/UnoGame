@@ -56,6 +56,16 @@ function GameBoard({
 
   const isHandAnimating = (pid) => animatingPlayerId === pid;
 
+  const getHandSpacing = (handSize) => {
+    if(handSize <= 7) return '-space-x-8';
+    if(handSize <= 10) return '-space-x-10';
+    if(handSize <= 16) return '-space-x-10';
+    return '-space-x-12';
+  };
+
+  const mobileHandSpacing = currentPlayer ? getHandSpacing(currentPlayer.hand.length) : '-space-x-8';
+  const desktopHandSpacing = currentPlayer ? getHandSpacing(currentPlayer.hand.length) : '-space-x-8';
+
   
 
   return (
@@ -167,7 +177,7 @@ function GameBoard({
                 {isMyTurn && " - Your Turn"}
               </p>
 
-              <div className='flex justify-center -space-x-5 px-2 overflow-x-auto'>
+              <div className= {`flex justify-center ${mobileHandSpacing} px-2`}>
                 {currentPlayer.hand.map((card, i) => (
                   <Card 
                     key={i}
@@ -175,6 +185,7 @@ function GameBoard({
                     value={card.value}
                     onClick={() => onPlayCard(i)}
                     isPlayable={isMyTurn}
+                    zIndex = {i}
                   />
                 ))}
               </div>
@@ -267,7 +278,7 @@ function GameBoard({
                 {isMyTurn && " - Your Turn"}
               </p>
 
-              <div className='flex justify-center -space-x-8 lg:-space-x-6 xl:gap-2 px-2 oveflow-x-auto'>
+              <div className= {`flex justify-center ${desktopHandSpacing} lg:${desktopHandSpacing} px-2 overflow-visible pb-8`}>
                 {currentPlayer.hand.map((card, i) => (
                   <Card 
                     key={i}
@@ -275,6 +286,7 @@ function GameBoard({
                     value={card.value}
                     onClick={() => onPlayCard(i)}
                     isPlayable={isMyTurn}
+                    zIndex={i}
                   />
                 ))}
               </div>
