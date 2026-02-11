@@ -94,7 +94,7 @@ export default function Lobby({
                         <button
                             onClick={handleStartGame}
                             disabled={!canStart}
-                            className ="w-full py-3 rounded-lg bg-uno-red hover:bg-uno-red/90 text-white font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            className ="w-full py-3 rounded-lg bg-uno-red hover:bg-uno-red/90 active:bg-uno-red/60 active:translate-y-0.5 text-white font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {canStart ? 'Start Game' : 'Need 2+ players'}
                         </button>
@@ -102,7 +102,7 @@ export default function Lobby({
 
                     <button
                         onClick={onLeave}
-                        className ='w-full py-3 rounded-lg bg-white/10 hover:bg-white/20 text-white transition'
+                        className ='w-full py-3 rounded-lg bg-white/10 hover:bg-white/20 active:bg-white/20 active:translate-y-0.5 text-white transition'
                     >
                         Leave Game
                     </button>

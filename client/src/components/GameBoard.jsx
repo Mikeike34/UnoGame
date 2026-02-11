@@ -68,7 +68,7 @@ function GameBoard({
     ">
       <button
         onClick={onLeaveGame}
-        className='absolute top-4 left-4 z-50 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition shadow-lg text-sm'
+        className='absolute top-4 left-4 z-50 px-4 py-2 bg-red-600 hover:bg-red-700 active:bg-red-700 active:active:translate-y-0.5 text-white rounded-lg font-semibold transition shadow-lg text-sm'
       >
         Leave Game
       </button>
@@ -91,7 +91,7 @@ function GameBoard({
       )}
 
       {/*Mobile Layout -Single Column*/}
-      <div className = "md:hidden flex flex-col h-full py-4 gap-4">
+      <div className = "md:hidden flex flex-col h-full py-4 gap-4 mt-4">
         {/*Top Player */}
         {topPlayer && (
           <div className='flex justify-center'>
@@ -135,7 +135,7 @@ function GameBoard({
         <div className='flex items-center justify-center gap-6 flex-1'>
           <div
             onClick={onDrawCard}
-            className={`cursor-pointer hover:scale-105 transition-transform ${deckFlash ? 'animate-card-flash' : ''}`}
+            className={`cursor-pointer hover:scale-105 active:scale-105 transition-transform ${deckFlash ? 'animate-card-flash' : ''}`}
           >
             <Card showBack isPlayable />
             <p className='text-white text-xs text-center mt-1'>{deckCount} cards</p>
@@ -167,7 +167,7 @@ function GameBoard({
                 {isMyTurn && " - Your Turn"}
               </p>
 
-              <div className='flex justify-center -space-x-12 px-2 overflow-x-auto'>
+              <div className='flex justify-center -space-x-5 px-2 overflow-x-auto'>
                 {currentPlayer.hand.map((card, i) => (
                   <Card 
                     key={i}
@@ -267,7 +267,7 @@ function GameBoard({
                 {isMyTurn && " - Your Turn"}
               </p>
 
-              <div className='flex justify-center -space-x-8 lg:-space-x-6 xl:gap-2'>
+              <div className='flex justify-center -space-x-8 lg:-space-x-6 xl:gap-2 px-2 oveflow-x-auto'>
                 {currentPlayer.hand.map((card, i) => (
                   <Card 
                     key={i}

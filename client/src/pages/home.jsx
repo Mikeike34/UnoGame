@@ -37,7 +37,7 @@ export default function Home({ onEnter }){
                     <button
                         type='submit'
                         disabled = {!username.trim()}
-                        className = 'w-full py-3 rounded-lg bg-uno-red hover:bg-uno-red/90 text-white font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed'
+                        className = 'w-full py-3 rounded-lg bg-uno-red hover:bg-uno-red/70 active:bg-uno-red/50 text-white font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed'
                     >
                         Enter
                     </button>

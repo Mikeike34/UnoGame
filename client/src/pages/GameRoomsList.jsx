@@ -42,7 +42,7 @@ export default function GameRoomsList({username, onCreateGame, onJoinGame, hostL
     };
 
     return(
-        <div className = 'min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center px-4 py-8'>
+        <div className = 'min-h-screen bg-linear-to-br from-slate-900 to-slate-800 flex items-center justify-center px-4 py-8'>
             <div className="w-full max-w-2xl space-y-6">
                 {/*Header */}
                 <div className= "text-center">
@@ -65,7 +65,7 @@ export default function GameRoomsList({username, onCreateGame, onJoinGame, hostL
                 {/*Create Game Button */}
                 <button
                     onClick = {handleCreateGame}
-                    className = "w-full py-4 rounded-lg bg-uno-red hover:bg-uno-red/90 text-white font-semibold transition text-lg"
+                    className = "w-full py-4 rounded-lg bg-uno-red hover:bg-uno-red/90 active:bg-uno-red/60 text-white font-semibold transition text-lg"
                 >
                     Create New Game
                 </button>
@@ -143,7 +143,7 @@ export default function GameRoomsList({username, onCreateGame, onJoinGame, hostL
                     <button
                         onClick={handleJoinRoom}
                         disabled={!canJoinRoom(selectedRoom)}
-                        className="w-full py-4 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full py-4 rounded-lg bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-400 text-white font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Join {selectedRoom.id}
                     </button>

@@ -65,13 +65,6 @@ function App() {
     //Host Left Game
     socket.on('HOST_LEFT', () => {
       console.log('Host ended the game');
-      
-      const isPlayerInGame = game.players.some(p => p.id === playerId);
-      if(!isPlayerInGame){
-        console.log('Player not in game, ignoring state update');
-        return;
-      }
-
       setGameState(null);
       setView('rooms');
       setHostLeftMessage(true);

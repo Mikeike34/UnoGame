@@ -65,7 +65,7 @@ function Card({color, value, onClick, isPlayable = true, showBack = false}) {
                 onClick={isPlayable ? onClick : undefined}
                 className = {`
                     relative  rounded-xl shadow-lg bg-white transition-all duration-200
-                    ${isPlayable ? 'cursor-pointer hover:scale-110 hover:-translate-y-2' : 'opacity-50 cursor-not-allowed'}
+                    ${isPlayable ? 'cursor-pointer hover:scale-110 hover:-translate-y-2 hover:z-20 active:scale-110 active:-translate-y-2 active:z-20' : 'opacity-50 cursor-not-allowed'}
                     w-16 h-24 sm:w-20 sm:h-32 md:w-24 md:h-36
                     `}
             >
@@ -109,7 +109,7 @@ function Card({color, value, onClick, isPlayable = true, showBack = false}) {
             className = {`
                 relative rounded-xl shadow-lg
                 transition-all duration-200
-                ${isPlayable ? 'cursor-pointer hover:scale-110 hover:-translate-y-2' : 'opacity-50 cursor-not-allowed'}
+                ${isPlayable ? 'cursor-pointer hover:scale-110 hover:-translate-y-2 hover:z-20 active:scale-110 active:-translate-y-2 active:z-20' : 'opacity-50 cursor-not-allowed'}
                 bg-white
                 w-16 h-24 sm:w-20 sm:h-32 md:w-24 md:h-36
                 `}
