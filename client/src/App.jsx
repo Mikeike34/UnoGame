@@ -37,6 +37,13 @@ function App() {
     // Game state updated
     socket.on('GAME_STATE_UPDATE', (game) => {
       console.log('Game state updated:', game);
+
+      const isPlayerInGame = game.players.some(p => p.id === playerId);
+      if(!isPlayerInGame){
+        console.log('Player not in game, ignoring state update');
+        return;
+      }
+
       setGameState(game);
 
       if(game.status === 'waiting' && currentViewRef.current === 'rooms'){
@@ -58,6 +65,13 @@ function App() {
     //Host Left Game
     socket.on('HOST_LEFT', () => {
       console.log('Host ended the game');
+      
+      const isPlayerInGame = game.players.some(p => p.id === playerId);
+      if(!isPlayerInGame){
+        console.log('Player not in game, ignoring state update');
+        return;
+      }
+
       setGameState(null);
       setView('rooms');
       setHostLeftMessage(true);
@@ -82,7 +96,7 @@ function App() {
       socket.off('CARD_PLAYED');
       socket.off('CARD_DRAWN');
     };
-  }, [socket]);
+  }, [socket, playerId]);
 
   // Handler: User enters username
   const handleEnter = (enteredUsername) => {
