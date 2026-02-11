@@ -4,6 +4,7 @@ import Home from './pages/home';
 import GameRoomsList from './pages/GameRoomsList';
 import Lobby from './pages/lobby';
 import GameBoard from './components/GameBoard';
+import ColorPicker from './components/Colorpicker';
 
 function App() {
   const { socket } = useSocket();
@@ -13,6 +14,8 @@ function App() {
   const [gameState, setGameState] = useState(null);
   const [hostLeftMessage, setHostLeftMessage] = useState(null);
   const [cardAnimation, setCardAnimation] = useState(null);
+  const[showColorPicker, setShowColorPicker] = useState(false);
+  const[pendingCardPlay, setPendingCardPlay] = useState(null);
 
   const currentViewRef = useRef(currentView);
   const setView = (view) => {
@@ -138,20 +141,39 @@ function App() {
     // If wild or +4, prompt for color
     let chosenColor = null;
     if (card && (card.value === 'wild' || card.value === '+4')) {
-      chosenColor = prompt('Choose color (red, blue, green, yellow):');
-      if (!['red', 'blue', 'green', 'yellow'].includes(chosenColor)) {
-        alert('Invalid color!');
-        return;
-      }
+      setPendingCardPlay({cardIndex});
+      setShowColorPicker(true);
+      return;
     }
 
-    console.log('Playing card:', cardIndex, chosenColor);
     socket.emit('PLAY_CARD', {
       gameId: gameState.id,
       playerId,
       cardIndex,
-      chosenColor
+      chosenColor: null
     });
+  };
+
+  //Handler: Color Select
+  const handleColorSelect = (color) => {
+    if(!socket || !gameState || !pendingCardPlay)return;
+
+    socket.emit('PLAY_CARD', {
+      gameId: gameState.id,
+      playerId,
+      cardIndex: pendingCardPlay.cardIndex,
+      chosenColor: color
+    });
+
+    //Close picker and reset state
+    setShowColorPicker(false);
+    setPendingCardPlay(null);
+  };
+
+  //Handler: Cancel Color Select
+  const handleColorPickerCancel = () => {
+    setShowColorPicker(false);
+    setPendingCardPlay(null);
   };
 
   // Handler: Draw card
@@ -192,17 +214,27 @@ function App() {
       )}
 
       {currentView === 'game' && gameState && (
-        <GameBoard
-          players={gameState.players}
-          currentPlayerId={playerId}
-          currentTurnIndex={gameState.currentTurn}
-          discardPile={gameState.discardPile}
-          deckCount={gameState.deck.length}
-          onDrawCard={handleDrawCard}
-          onPlayCard={handlePlayCard}
-          onLeaveGame={handleLeave}
-          winner={gameState.winner}
-        />
+        <>
+          <GameBoard
+            players={gameState.players}
+            currentPlayerId={playerId}
+            currentTurnIndex={gameState.currentTurn}
+            discardPile={gameState.discardPile}
+            deckCount={gameState.deck.length}
+            onDrawCard={handleDrawCard}
+            onPlayCard={handlePlayCard}
+            onLeaveGame={handleLeave}
+            winner={gameState.winner}
+            cardAnimation={cardAnimation}
+          />
+
+          {showColorPicker && (
+            <ColorPicker 
+              onColorSelect={handleColorSelect}
+              onCancel={handleColorPickerCancel}
+            />
+          )}
+        </>
       )}
     </>
   );
