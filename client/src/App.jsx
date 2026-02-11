@@ -79,6 +79,8 @@ function App() {
       socket.off('GAME_STATE_UPDATE');
       socket.off('INVALID_MOVE');
       socket.off('HOST_LEFT');
+      socket.off('CARD_PLAYED');
+      socket.off('CARD_DRAWN');
     };
   }, [socket]);
 

@@ -287,7 +287,7 @@ function GameBoard({
   )
 }
 
-function Opponent({ player, vertical = false, side, isCurrentTurn, mobileLayout, isAnimating, animationType}){
+function Opponent({ player, vertical = false, side, isCurrentTurn, mobileLayout, isAnimating}){
   const maxCards = 6;
   const displayCards = player.hand.slice(0, maxCards);
   const hiddenCards = Math.max(0, player.hand.length - maxCards);
