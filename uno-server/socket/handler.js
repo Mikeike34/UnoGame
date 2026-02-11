@@ -101,6 +101,7 @@ module.exports = function registerSocketHandlers(io){
             if(result.error){
                 socket.emit("INVALID_MOVE", result.error)
             }else{
+                io.to(gameId).emit("CARD_PLAYED", { playerId })
                 io.to(gameId).emit("GAME_STATE_UPDATE", game)
             }
         })
@@ -112,6 +113,7 @@ module.exports = function registerSocketHandlers(io){
             if(result.error){
                 socket.emit("INVALID_MOVE", result.error)
             }else{
+                io.to(gameId).emit('CARD_DRAWN', { playerId })
                 io.to(gameId).emit("GAME_STATE_UPDATE", game)
             }
         })
@@ -136,7 +138,7 @@ module.exports = function registerSocketHandlers(io){
                 if(game.players.length === 0){
                     deleteGame(gameId)
                 }else{
-                    io.to(gameId).emit("GAME_STATUS_UPDATE", game)
+                    io.to(gameId).emit("GAME_STATE_UPDATE", game)
                 }
             }
         })
