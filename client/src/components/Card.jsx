@@ -56,19 +56,19 @@ function Card({color, value, onClick, isPlayable = true, showBack = false, zInde
 
 
     const handleMouseEnter = () => {
-        if (isPlayable && !isDragging && !touchHandled.current) {
+        if (isPlayable && !touchHandled.current) {
             setIsActive(true);
         }
     };
 
     const handleMouseLeave = () => {
-        if (!isDragging) setIsActive(false);
+        if (!touchHandled.current) setIsActive(false);
     };
 
     const handleClick = (e) => {
         if (touchHandled.current) return;
         
-        if (isPlayable && onClick && !isDragging) {
+        if (isPlayable && onClick) {
             onClick();
         }
     };
