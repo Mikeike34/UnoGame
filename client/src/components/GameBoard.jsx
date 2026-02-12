@@ -72,13 +72,19 @@ function GameBoard({
     <div className="
       relative
       w-full
-      h-screen
       overflow-hidden
       bg-linear-to-br from-green-800 to-green-900
-    ">
+    "
+    style={{
+      height: '100dvh',
+      paddingTop: 'env(safe-area-inset-top)',
+      paddingBottom: 'env(safe-area-inset-bottom)',
+    }}
+    >
       <button
         onClick={onLeaveGame}
         className='absolute top-4 left-4 z-50 px-4 py-2 bg-red-600 hover:bg-red-700 active:bg-red-700 active:active:translate-y-0.5 text-white rounded-lg font-semibold transition shadow-lg text-sm'
+        style={{ marginTop: 'env(safe-area-inset-top)'}}
       >
         Leave Game
       </button>
@@ -101,7 +107,7 @@ function GameBoard({
       )}
 
       {/*Mobile Layout -Single Column*/}
-      <div className = "md:hidden flex flex-col h-full py-4 gap-4 mt-4">
+      <div className = "md:hidden flex flex-col h-full py-2 gap-2">
         {/*Top Player */}
         {topPlayer && (
           <div className='flex justify-center'>
