@@ -3,6 +3,8 @@ import {io} from 'socket.io-client';
 
 const SocketContext = createContext(null);
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 export function useSocket(){
     return useContext(SocketContext);
 }
@@ -13,8 +15,8 @@ export function SocketProvider({children}){
 
     useEffect(() => {
         //Connect to server
-        const newSocket = io('http://localhost:3500', {
-            autoConnect: true,
+        const newSocket = io(BACKEND_URL, {
+            transports: ['websocket'],
         });
 
         newSocket.on('connect', () => {

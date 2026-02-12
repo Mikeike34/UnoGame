@@ -10,11 +10,19 @@ app.use(cors())
 
 const server = http.createServer(app)
 const io = new Server(server, {
-    cors: {origin: '*'}
-})
+    cors: {
+        origin: [
+            'http://localhost:5173',
+            'https://uno-game.pages.dev'
+        ],
+        methods: ['GET', 'POST'] 
+    }
+});
 
 registerSocketHandlers(io)
 
-server.listen(3500, () => {
-    console.log("Uno server running on port 3500")
-})
+const PORT = process.env.PORT || 3500;
+
+server.listen(PORT, () => {
+    console.log(`Uno server running on port ${PORT}`)
+});
