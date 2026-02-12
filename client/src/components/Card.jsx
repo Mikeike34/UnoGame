@@ -3,7 +3,6 @@ import React, { useRef, useState } from "react";
 function Card({color, value, onClick, isPlayable = true, showBack = false, zIndex = 0}) {
 
     const[isActive, setIsActive] = useState(false);
-    const [isDragging, setIsDragging] = useState(false);
     const touchHandled = useRef(false);
 
     const colorClasses = {
@@ -41,14 +40,6 @@ function Card({color, value, onClick, isPlayable = true, showBack = false, zInde
         setIsActive(true);
     };
 
-    const handleTouchMove = (e) => {
-        if(!isPlayable) return;
-        const touch = e.touches[0];
-        const element = document.elementFromPoint(touch.clientX, touch.clientY);
-        const isOverCard = element?.closest('[data-card-id]')?.dataset.cardId === e.currentTarget.dataset.cardId;
-        setIsActive(isOverCard);
-    };
-
     const handleTouchEnd = (e) => {
         if(!isPlayable)return;
         e.preventDefault();
@@ -63,27 +54,6 @@ function Card({color, value, onClick, isPlayable = true, showBack = false, zInde
         }, 500);
     };
 
-    const handleMouseDown = (e) => {
-        if(!isPlayable || touchHandled.current) return;
-        setIsDragging(true);
-        setIsActive(true);
-    };
-
-    const handleMouseMove = (e) => {
-        if (!isPlayable || !isDragging || touchHandled.current) return;
-        const element = document.elementFromPoint(e.clientX, e.clientY);
-        const isOverCard = element?.closest('[data-card-id]')?.dataset.cardId === e.currentTarget.dataset.cardId;
-        setIsActive(isOverCard);
-    }
-
-    const handleMouseUp = (e) => {
-        if (!isPlayable || touchHandled.current) return;
-        if (isDragging && isActive && onClick) {
-            onClick();
-        }
-        setIsDragging(false);
-        setIsActive(false);
-    };
 
     const handleMouseEnter = () => {
         if (isPlayable && !isDragging && !touchHandled.current) {
@@ -145,13 +115,9 @@ function Card({color, value, onClick, isPlayable = true, showBack = false, zInde
             <div
                 data-card-id={`${color}-${value}-${zIndex}`}
                 onClick={handleClick}
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
                 className = {`
                     relative  rounded-xl shadow-lg bg-white transition-all duration-200
@@ -199,13 +165,9 @@ function Card({color, value, onClick, isPlayable = true, showBack = false, zInde
         <div
             data-card-id={`${color}-${value}-${zIndex}`}
             onClick={handleClick}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
             className = {`
                 relative rounded-xl shadow-lg
