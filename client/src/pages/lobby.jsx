@@ -19,7 +19,13 @@ export default function Lobby({
     };
 
     return(
-        <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4 overflow-hidden pt-env(safe-area-inset-top) pb-env(safe-area-inset-bottom) overscroll-y-none">
+        <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4 overflow-hidden"
+            style={{
+            height: '100dvh',
+            paddingTop: 'env(safe-area-inset-top)', 
+            paddingBottom: 'env(safe-area-inset-bottom)',
+            }}
+        >
             <div className="w-full max-w-md bg-slate-800 rounded-xl p-6 space-y-5 shadow-lg">
                 
                 {/*Header */}

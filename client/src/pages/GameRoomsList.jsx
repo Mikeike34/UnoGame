@@ -42,7 +42,13 @@ export default function GameRoomsList({username, onCreateGame, onJoinGame, hostL
     };
 
     return(
-        <div className = 'min-h-screen bg-linear-to-br from-slate-900 to-slate-800 flex items-center justify-center px-4 py-8 overflow-hidden pt-env(safe-area-inset-top) pb-env(safe-area-inset-bottom) overscroll-y-none'>
+        <div className = 'min-h-screen bg-linear-to-br from-slate-900 to-slate-800 flex items-center justify-center px-4 py-8 overflow-hidden'
+            style={{
+            height: '100dvh',
+            paddingTop: 'env(safe-area-inset-top)', 
+            paddingBottom: 'env(safe-area-inset-bottom)',
+            }}
+        >
             <div className="w-full max-w-2xl space-y-6">
                 {/*Header */}
                 <div className= "text-center">
