@@ -76,7 +76,7 @@ function Card({color, value, onClick, isPlayable = true, showBack = false, zInde
         setIsActive(isOverCard);
     }
 
-    const handleMouseup = (e) => {
+    const handleMouseUp = (e) => {
         if (!isPlayable || touchHandled.current) return;
         if (isDragging && isActive && onClick) {
             onClick();
