@@ -3,6 +3,8 @@ import React, { useState } from "react";
 function Card({color, value, onClick, isPlayable = true, showBack = false, zIndex = 0}) {
 
     const[isActive, setIsActive] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+    const touchHandled = useRef(false);
 
     const colorClasses = {
         red: 'uno-red',
@@ -30,10 +32,12 @@ function Card({color, value, onClick, isPlayable = true, showBack = false, zInde
             case 'wild': return 'WILD'
             default: return value.toString().toUpperCase()
         }
-    }
+    };
+
 
     const handleTouchStart = (e) => {
         if(!isPlayable) return;
+        touchHandled.current = true;
         setIsActive(true);
     };
 
@@ -47,22 +51,54 @@ function Card({color, value, onClick, isPlayable = true, showBack = false, zInde
 
     const handleTouchEnd = (e) => {
         if(!isPlayable)return;
+        e.preventDefault();
+
         if(isActive && onClick){
             onClick();
         }
         setIsActive(false);
+
+        setTimeout(() => {
+            touchHandled.current = false;
+        }, 500);
     };
 
-    const handleMouseEnter = () => {
-        if(isPlayable) setIsActive(true);
+    const handleMouseDown = (e) => {
+        if(!isPlayable || touchHandled.current) return;
+        setIsDragging(true);
+        setIsActive(true);
     };
 
-    const handleMouseLeave = () => {
+    const handleMouseMove = (e) => {
+        if (!isPlayable || !isDragging || touchHandled.current) return;
+        const element = document.elementFromPoint(e.clientX, e.clientY);
+        const isOverCard = element?.closest('[data-card-id]')?.dataset.cardId === e.currentTarget.dataset.cardId;
+        setIsActive(isOverCard);
+    }
+
+    const handleMouseup = (e) => {
+        if (!isPlayable || touchHandled.current) return;
+        if (isDragging && isActive && onClick) {
+            onClick();
+        }
+        setIsDragging(false);
         setIsActive(false);
     };
 
+    const handleMouseEnter = () => {
+        if (isPlayable && !isDragging && !touchHandled.current) {
+            setIsActive(true);
+        }
+    };
+
+    const handleMouseLeave = () => {
+        if (!isDragging) setIsActive(false);
+    };
+
     const handleClick = (e) => {
-        if(isPlayable && onClick){
+        if (touchHandled.current) return;
+        
+        if (isPlayable && onClick && !isDragging) {
             onClick();
         }
     };
@@ -109,11 +145,14 @@ function Card({color, value, onClick, isPlayable = true, showBack = false, zInde
             <div
                 data-card-id={`${color}-${value}-${zIndex}`}
                 onClick={handleClick}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
-                onTouchEnd = {handleTouchEnd}
+                onTouchEnd={handleTouchEnd}
                 className = {`
                     relative  rounded-xl shadow-lg bg-white transition-all duration-200
                     ${interactionClasses}
@@ -160,11 +199,14 @@ function Card({color, value, onClick, isPlayable = true, showBack = false, zInde
         <div
             data-card-id={`${color}-${value}-${zIndex}`}
             onClick={handleClick}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
-            onTouchEnd = {handleTouchEnd}
+            onTouchEnd={handleTouchEnd}
             className = {`
                 relative rounded-xl shadow-lg
                 transition-all duration-200
