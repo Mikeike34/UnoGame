@@ -9,7 +9,12 @@ function startGame(game){
     })
 
     //start discard pile
-    game.discardPile = [game.deck.pop()]
+    let firstCard = game.deck.pop();
+    while(firstCard.color === 'wild'){
+        game.deck.unshift(firstCard);
+        firstCard = game.deck.pop();
+    }
+    game.discardPile = [firstCard];
 
     //First player starts
     game.currentTurn = 0
