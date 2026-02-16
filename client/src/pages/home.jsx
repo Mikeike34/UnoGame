@@ -11,16 +11,16 @@ export default function Home({ onEnter }){
     };
 
     return(
-        <div className="min-h-screen bg-linear-to-br from-slate-900 to-slate-800 flex items-center justify-center px-4 overflow-hidden"
+        <div className="relative w-full bg-linear-to-br from-slate-900 to-slate-800 flex items-center justify-center px-4 overflow-hidden"
             style={{
             height: '100dvh',
             paddingTop: 'env(safe-area-inset-top)', 
             paddingBottom: 'env(safe-area-inset-bottom)',
             }}
         >
-            <div className="w-full max-w-sm text-center space-y-6">
+            <div className="w-full max-w-sm text-center space-y-6 px-4">
                 {/* Game Title */}
-                <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
+                <h1 className="text-5xl sm:text-6xl font-extrabold text-white tracking-tight">
                     UNO
                 </h1>
 
@@ -50,7 +50,10 @@ export default function Home({ onEnter }){
                 </form>
                 {/*Footer */}
                 <p className='text-white/40 text-xs mt-8'>
-                    Connect with friends and play Uno online! Developed by Michael Cantone
+                    Connect with friends and play Uno online!
+                </p>
+                <p className="text-white/30 text-xs">
+                    Developed by Michael Cantone
                 </p>
             </div>
         </div>

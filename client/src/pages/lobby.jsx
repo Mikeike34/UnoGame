@@ -19,14 +19,14 @@ export default function Lobby({
     };
 
     return(
-        <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4 overflow-hidden"
+        <div className="relative w-full bg-slate-900 overflow-hidden flex items-center justify-center"
             style={{
             height: '100dvh',
             paddingTop: 'env(safe-area-inset-top)', 
             paddingBottom: 'env(safe-area-inset-bottom)',
             }}
         >
-            <div className="w-full max-w-md bg-slate-800 rounded-xl p-6 space-y-5 shadow-lg">
+            <div className="w-full max-w-md bg-slate-800 rounded-xl p-6 space-y-5 shadow-lg mx-4">
                 
                 {/*Header */}
                 <div className="text-center">

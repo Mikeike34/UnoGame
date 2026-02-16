@@ -42,14 +42,14 @@ export default function GameRoomsList({username, onCreateGame, onJoinGame, hostL
     };
 
     return(
-        <div className = 'min-h-screen bg-linear-to-br from-slate-900 to-slate-800 flex items-center justify-center px-4 py-8 overflow-hidden'
+        <div className = 'relative w-full bg-linear-to-br from-slate-900 to-slate-800 overflow-hidden flex items-center justify-center'
             style={{
             height: '100dvh',
             paddingTop: 'env(safe-area-inset-top)', 
             paddingBottom: 'env(safe-area-inset-bottom)',
             }}
         >
-            <div className="w-full max-w-2xl space-y-6">
+            <div className="w-full max-w-2xl space-y-6 mx-4">
                 {/*Header */}
                 <div className= "text-center">
                     <h1 className="text-4xl font-bold text-white mb-2">Game Rooms</h1>
@@ -64,7 +64,7 @@ export default function GameRoomsList({username, onCreateGame, onJoinGame, hostL
                             onClick={onDismissHostLeft}
                             className ='ml-4 text-yellow-200 hover:text-white font-bold text-lg leading-none'
                         >
-                            x
+                            ✕
                         </button>
                     </div>
                 )}
@@ -88,7 +88,7 @@ export default function GameRoomsList({username, onCreateGame, onJoinGame, hostL
                             <p className="text-sm mt-2">Create one to get started!</p>
                         </div>
                     ):(
-                        <div className = "space-y-3 max-h-96 overflow-y-auto">
+                        <div className = "space-y-3 max-h-64 overflow-y-auto">
                             {rooms.map((room) => {
                                 const joinable = canJoinRoom(room);
                                 const isSelected = selectedRoom?.id === room.id;
