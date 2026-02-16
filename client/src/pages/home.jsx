@@ -11,7 +11,7 @@ export default function Home({ onEnter }){
     };
 
     return(
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center px-4 overflow-hidden"
+        <div className="min-h-screen bg-linear-to-br from-slate-900 to-slate-800 flex items-center justify-center px-4 overflow-hidden"
             style={{
             height: '100dvh',
             paddingTop: 'env(safe-area-inset-top)', 
