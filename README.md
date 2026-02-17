@@ -284,6 +284,12 @@ Project Link: [https://github.com/Mikeike34/UnoGame](https://github.com/Mikeike3
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+<!-- DISCLAIMER -->
+## Disclaimer
+This is a personal portfolio project created for educational purposes. 
+UNO is a trademark of Mattel, Inc. This project is not affiliated with, 
+endorsed by, or sponsored by Mattel, Inc.
+
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
